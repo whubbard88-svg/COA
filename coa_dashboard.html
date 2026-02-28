@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chart of Accounts Best Practices Dashboard (with Samples)</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #151a2c;
+      --panel-soft: #191f33;
+      --accent: #4f8cff;
+      --accent-soft: rgba(79,140,255,0.15);
+      --accent-strong: #ffc857;
+      --text: #f4f6ff;
+      --muted: #9aa1c4;
+      --border: #262c43;
+      --bad: #ff6b6b;
+      --good: #3dd68c;
+      --badge-bg: #1f253b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #161c34 0, #050714 55%, #02030a 100%);
+      color: var(--text);
+    }
+
+    .app {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(79,140,255,0.1);
+      color: var(--accent);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #5df4a6;
+      box-shadow: 0 0 12px rgba(93,244,166,0.7);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.8fr);
+      gap: 20px;
+      margin-bottom: 22px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+    }
+
+    .hero-main {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero-title {
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    .hero-sub {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 540px;
+    }
+
+    .hero-kpis {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .kpi-card {
+      background: linear-gradient(145deg, #151a2c, #101528);
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      min-width: 120px;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .kpi-value {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .kpi-chip {
+      margin-left: 6px;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(61,214,140,0.1);
+      color: var(--good);
+    }
+
+    .kpi-bad {
+      background: rgba(255,107,107,0.08);
+      color: var(--bad);
+    }
+
+    .hero-right {
+      background: radial-gradient(circle at top, #1d2440 0, #101528 55%, #050814 100%);
+      border-radius: 16px;
+      padding: 14px 14px 16px;
+      border: 1px solid rgba(79,140,255,0.35);
+      box-shadow: 0 0 32px rgba(79,140,255,0.22);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-right h3 {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .hero-right p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .hero-highlight-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .hero-highlight {
+      background: rgba(9, 11, 28, 0.9);
+      border-radius: 10px;
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .hero-highlight-label {
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .hero-highlight-value {
+      font-size: 13px;
+    }
+
+    .hero-mini {
+      font-size: 11px;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,0.03);
+      padding-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .hero-mini span.key {
+      color: var(--accent-strong);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr);
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .layout-bottom {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.1fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 1100px) {
+      .layout-bottom { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 14px 14px 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .panel-title {
+      font-size: 14px;
+    }
+
+    .panel-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .badge {
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--badge-bg);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    select, button {
+      font-family: inherit;
+      font-size: 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--panel-soft);
+      color: var(--text);
+      padding: 4px 8px;
+      outline: none;
+    }
+
+    select:focus, button:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(79,140,255,0.4);
+    }
+
+    button {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, var(--accent), #7c5cff);
+      border: none;
+    }
+
+    button.ghost {
+      background: transparent;
+    }
+
+    .pill-button {
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      border: 1px solid var(--border);
+      background: rgba(21,26,44,0.9);
+      color: var(--muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-button.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: rgba(79,140,255,0.7);
+    }
+
+    .pill-button span.dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+    }
+
+    .pill-button.active span.dot {
+      background: #5df4a6;
+      box-shadow: 0 0 10px rgba(93,244,166,0.9);
+    }
+
+    .helper {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+      padding: 8px 9px;
+      border-radius: 10px;
+      background: rgba(10,12,30,0.95);
+      border: 1px dashed rgba(255,255,255,0.08);
+    }
+
+    .helper span.key {
+      color: var(--accent-strong);
+    }
+
+    .best-practice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+      max-height: 250px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .bp-item {
+      background: var(--panel-soft);
+      border-radius: 12px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .bp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bp-title {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .bp-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(79,140,255,0.12);
+      color: var(--accent);
+    }
+
+    .bp-score {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .bp-chip {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(61,214,140,0.1);
+      color: var(--good);
+      margin-left: 4px;
+    }
+
+    .bp-body {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .bp-footer {
+      font-size: 10px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2px;
+    }
+
+    .pill-mini {
+      border-radius: 999px;
+      padding: 2px 6px;
+      border: 1px dashed rgba(255,255,255,0.16);
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .maturity-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .maturity-label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .maturity-badge {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(61,214,140,0.12);
+      color: var(--good);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .maturity-badge.low {
+      background: rgba(255,107,107,0.08);
+      color: var(--bad);
+    }
+
+    .maturity-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #fff, #3dd68c);
+      box-shadow: 0 0 14px rgba(61,214,140,0.9);
+    }
+
+    .maturity-dot.low {
+      background: radial-gradient(circle at 30% 30%, #fff, #ff6b6b);
+      box-shadow: 0 0 14px rgba(255,107,107,0.9);
+    }
+
+    .scores-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .score-card {
+      background: var(--panel-soft);
+      border-radius: 10px;
+      padding: 6px 7px;
+      border: 1px solid rgba(255,255,255,0.03);
+      font-size: 10px;
+    }
+
+    .score-label {
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .score-value {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .score-bar {
+      position: relative;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      margin-top: 4px;
+      overflow: hidden;
+    }
+
+    .score-bar-fill {
+      position: absolute;
+      inset: 0;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #3dd68c, #4f8cff);
+      transition: width 0.4s ease;
+    }
+
+    .score-bar-fill.low {
+      background: linear-gradient(90deg, #ff6b6b, #ffc857);
+    }
+
+    .radar-wrapper {
+      margin-top: 4px;
+      padding: 8px 10px 10px;
+      border-radius: 12px;
+      background: radial-gradient(circle at top, #1a2140 0, #101526 55%, #050814 100%);
+      border: 1px solid rgba(255,255,255,0.04);
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.3fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    @media (max-width: 800px) {
+      .radar-wrapper { grid-template-columns: 1fr; }
+    }
+
+    .radar-legend {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .legend-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-color {
+      width: 18px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #4f8cff, #7c5cff);
+    }
+
+    .legend-color.target {
+      background: linear-gradient(90deg, #3dd68c, #b0f9c8);
+    }
+
+    .legend-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+    }
+
+    .radar-canvas {
+      width: 100%;
+      max-width: 260px;
+      aspect-ratio: 1;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .scenario-row {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .scenario-label {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    /* Sample accounts panel */
+
+    .sample-legend {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .sample-toggle-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .sample-tag {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+    }
+
+    .sample-list {
+      margin-top: 4px;
+      max-height: 260px;
+      overflow: auto;
+      padding-right: 4px;
+      border-radius: 12px;
+      background: var(--panel-soft);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .sample-group {
+      padding: 6px 10px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .sample-group:last-child {
+      border-bottom: none;
+    }
+
+    .sample-group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .sample-group-title {
+      font-size: 12px;
+    }
+
+    .sample-group-range {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .sample-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .sample-table th,
+    .sample-table td {
+      padding: 3px 2px;
+      text-align: left;
+    }
+
+    .sample-table th {
+      font-size: 10px;
+      color: rgba(154,161,196,0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .sample-table td.code {
+      color: rgba(209,216,255,0.9);
+      white-space: nowrap;
+    }
+
+    .sample-table tr:nth-child(even) td {
+      background: rgba(0,0,0,0.08);
+    }
+
+    .sample-hint {
+      font-size: 10px;
+      color: var(--muted);
+      padding: 6px 10px 6px;
+      border-top: 1px dashed rgba(255,255,255,0.06);
+    }
+
+    .sample-hint span.key {
+      color: var(--accent-strong);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-main">
+        <div class="pill">
+          <span class="pill-dot"></span>
+          CHART OF ACCOUNTS • LIVE PLAYBOOK
+        </div>
+        <div>
+          <h1 class="hero-title">Chart of Accounts Best‑Practice Dashboard</h1>
+          <p class="hero-sub">
+            Use this interactive view to benchmark your chart of accounts against
+            proven design principles. Scenario choices update scores and concrete
+            sample accounts (with account numbers and names) you can adapt.
+          </p>
+        </div>
+
+        <div class="hero-kpis">
+          <div class="kpi-card">
+            <div class="kpi-label">Overall COA design score</div>
+            <div class="kpi-value">
+              <span id="kpi-overall">74</span>/100
+              <span class="kpi-chip" id="kpi-overall-chip">“Good, but noisy”</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Accounts vs. best‑practice range</div>
+            <div class="kpi-value">
+              <span id="kpi-accounts">145</span> accounts
+              <span class="kpi-chip kpi-bad" id="kpi-accounts-chip">Too granular</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">KPI‑ready structure</div>
+            <div class="kpi-value">
+              <span id="kpi-kpi-ready">62</span>/100
+              <span class="kpi-chip" id="kpi-kpi-chip">Gaps in KPIs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <h3>Design your COA like a reporting product</h3>
+        <p>
+          This dashboard encodes common guidance: start with the five major categories
+          (Assets, Liabilities, Equity, Revenue, Expenses), then break into consistent,
+          numbered ranges such as 1000‑1999 Assets, 2000‑2999 Liabilities, and so on.
+        </p>
+        <div class="hero-highlight-grid">
+          <div class="hero-highlight">
+            <div class="hero-highlight-label">Core structure</div>
+            <div class="hero-highlight-value">1000 Assets • 2000 Liabilities • 3000 Equity • 4000 Revenue • 5000 Expenses</div>
+          </div>
+          <div class="hero-highlight">
+            <div class="hero-highlight-label">Example ranges</div>
+            <div class="hero-highlight-value">1100–1199 Cash &amp; bank • 2100–2199 Payables • 6100–6399 Opex</div>
+          </div>
+          <div class="hero-highlight">
+            <div class="hero-highlight-label">Key design lens</div>
+            <div class="hero-highlight-value">Decision‑ready, not software‑default</div>
+          </div>
+        </div>
+        <div class="hero-mini">
+          <span>Tip: start from a simple numerical skeleton and add detail only when it changes decisions.</span>
+          <span class="key">“Fewer, smarter accounts beat a wall of detail.”</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP LAYOUT: controls + scores -->
+    <div class="layout">
+      <!-- LEFT: controls + principles -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Scenario &amp; design levers</div>
+            <div class="panel-subtitle">
+              Choose your business profile and how you’ve set up the chart of accounts.
+            </div>
+          </div>
+          <span class="badge">
+            <span class="badge-dot"></span>
+            Live guideline engine
+          </span>
+        </div>
+
+        <div class="filters">
+          <div class="filter-group">
+            <label>Business size</label>
+            <select id="businessSize">
+              <option value="smb">SMB (up to ~200 accounts)</option>
+              <option value="mid">Mid‑market</option>
+              <option value="enterprise">Enterprise / complex</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Industry shape</label>
+            <select id="industry">
+              <option value="saas">SaaS / recurring revenue</option>
+              <option value="services">Professional services / agency</option>
+              <option value="ecommerce">E‑commerce / inventory</option>
+              <option value="nonprofit">Non‑profit</option>
+              <option value="generic">Generic small business</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Current # of GL accounts</label>
+            <select id="accountCount">
+              <option value="80">&lt; 80</option>
+              <option value="130">~130</option>
+              <option value="180">~180</option>
+              <option value="250">~250</option>
+              <option value="400">400+</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Account hierarchy style</label>
+            <select id="hierarchyStyle">
+              <option value="flat">Flat &amp; focused (limited sub‑accounts)</option>
+              <option value="moderate">Moderate levels of sub‑accounts</option>
+              <option value="deep">Deep tree with many sub‑accounts</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filters" style="margin-top:4px;">
+          <div class="filter-group">
+            <label>Primary design goal</label>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="pill-button active" data-goal="decision">
+                <span class="dot"></span> Decision‑ready reporting
+              </button>
+              <button class="pill-button" data-goal="tax">
+                <span class="dot"></span> Tax &amp; compliance
+              </button>
+              <button class="pill-button" data-goal="granularity">
+                <span class="dot"></span> Extreme detail / granularity
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="helper" id="helperText">
+          <strong>Scenario lens:</strong> You’re designing for decision‑ready reporting in a SaaS‑flavored SMB.
+          Aim for a flat, GAAP‑aligned COA where revenue, gross margin, and operating costs are easy to read
+          directly from the ledger.
+        </div>
+
+        <div class="panel-header" style="margin-top:12px;">
+          <div>
+            <div class="panel-title">Principle checklist</div>
+            <div class="panel-subtitle">
+              Review how your selections stack against common best practices.
+            </div>
+          </div>
+        </div>
+
+        <div class="best-practice-list" id="bpList"></div>
+      </div>
+
+      <!-- RIGHT: scores + radar -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Design maturity &amp; KPI‑readiness</div>
+            <div class="panel-subtitle">
+              See how well your chart of accounts supports clarity, scalability, GAAP alignment, and FP&amp;A.
+            </div>
+          </div>
+          <button class="ghost" id="resetBtn" title="Reset to default scenario">
+            ⟳ Reset
+          </button>
+        </div>
+
+        <div class="maturity-row">
+          <div class="maturity-label">
+            Overall maturity band (1–5)
+          </div>
+          <div id="maturityBadge" class="maturity-badge">
+            <span id="maturityDot" class="maturity-dot"></span>
+            <span id="maturityLabel">Level 3 – Functional, but noisy</span>
+          </div>
+        </div>
+
+        <div class="scores-grid">
+          <div class="score-card">
+            <div class="score-label">Reporting clarity</div>
+            <div class="score-value" id="scoreClarity">78</div>
+            <div class="score-bar"><div class="score-bar-fill" id="barClarity"></div></div>
+          </div>
+          <div class="score-card">
+            <div class="score-label">Simplicity &amp; usability</div>
+            <div class="score-value" id="scoreSimplicity">70</div>
+            <div class="score-bar"><div class="score-bar-fill" id="barSimplicity"></div></div>
+          </div>
+          <div class="score-card">
+            <div class="score-label">Scalability over time</div>
+            <div class="score-value" id="scoreScalability">80</div>
+            <div class="score-bar"><div class="score-bar-fill" id="barScalability"></div></div>
+          </div>
+          <div class="score-card">
+            <div class="score-label">GAAP &amp; KPI alignment</div>
+            <div class="score-value" id="scoreGAAP">68</div>
+            <div class="score-bar"><div class="score-bar-fill" id="barGAAP"></div></div>
+          </div>
+        </div>
+
+        <div class="radar-wrapper">
+          <div class="radar-legend">
+            <div class="legend-row">
+              <div class="legend-label">
+                <span class="legend-color"></span>
+                <span>Current design profile</span>
+              </div>
+              <span class="legend-badge">Scores 0–100 by dimension</span>
+            </div>
+            <div class="legend-row">
+              <div class="legend-label">
+                <span class="legend-color target"></span>
+                <span>Target for “clean, scalable COA”</span>
+              </div>
+              <span class="legend-badge">Benchmark: modern controller playbooks</span>
+            </div>
+            <p>
+              As you tweak the scenario, imagine how your accounts roll up into the 5 core
+              categories (Assets, Liabilities, Equity, Revenue, Expenses) and whether someone
+              new can read the story in under a minute.
+            </p>
+          </div>
+          <div class="radar-canvas">
+            <canvas id="radarCanvas"></canvas>
+          </div>
+        </div>
+
+        <div class="scenario-row">
+          <span class="scenario-label">What this view is encoding:</span>
+          <span>
+            Common guidance: use clear numerical ranges, avoid duplicative accounts, keep
+            revenue and COGS structured around your economic engine, and ensure KPIs like
+            gross margin, burn, and unit economics drop out naturally.
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM LAYOUT: sample accounts + notes -->
+    <div class="layout-bottom">
+      <!-- Sample accounts -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Sample accounts for this scenario</div>
+            <div class="panel-subtitle">
+              Example account numbers &amp; names that match your selections. Use them as a starting template.
+            </div>
+          </div>
+          <span class="badge">
+            <span class="badge-dot"></span>
+            Numbering skeleton
+          </span>
+        </div>
+
+        <div class="sample-legend">
+          Account numbers follow a common pattern: 1xxx Assets, 2xxx Liabilities, 3xxx Equity,
+          4xxx Revenue, 5xxx COGS, 6xxx–7xxx Operating Expenses. Adjust ranges to your system.
+        </div>
+
+        <div class="sample-toggle-row">
+          <span class="sample-tag">Preset: opinionated but generic; safe to adapt.</span>
+        </div>
+
+        <div class="sample-list" id="sampleList"></div>
+      </div>
+
+      <!-- Notes / usage hints -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">How to adapt this to your books</div>
+            <div class="panel-subtitle">
+              Quick prompts to turn this dashboard into concrete next steps with your accountant or controller.
+            </div>
+          </div>
+        </div>
+
+        <ul style="margin:4px 0 8px 18px;font-size:11px;color:var(--muted);line-height:1.5;">
+          <li>Export your current COA to CSV and mark each account against these samples (keep, merge, rename, add).</li>
+          <li>Check that the 5 major categories map cleanly to your balance sheet and P&amp;L layouts.</li>
+          <li>List your top 5–8 management KPIs and confirm each has a clear, stable mapping to one or more accounts.</li>
+          <li>Agree with your accountant on who can create new accounts and under what naming/numbering rules.</li>
+        </ul>
+
+        <div class="helper">
+          <span class="key">Implementation tip:</span> treat this as a migration map. Start by
+          freezing the old chart, map it into this structure inside a sandbox or test company,
+          and only then roll changes into your live file once reports reconcile.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const bestPractices = [
+      {
+        id: "structure",
+        category: "Structure & hierarchy",
+        principle: "Organize accounts by financial statements, then by decision‑useful groupings.",
+        detail:
+          "Mirror the balance sheet and P&L first (assets, liabilities, equity, revenue, COGS, operating expenses), then add groupings that answer management questions.",
+        goodScenario: (s) =>
+          (s.hierarchyStyle === "flat" || s.hierarchyStyle === "moderate") &&
+          (s.industry === "saas" || s.industry === "services" || s.industry === "generic"),
+      },
+      {
+        id: "simplicity",
+        category: "Simplicity",
+        principle: "Keep the chart flat & focused; avoid sub‑accounts that don’t change decisions.",
+        detail:
+          "Aim for a manageable set of core accounts with consistent naming. Too many micro‑accounts slow close and make analysis harder.",
+        goodScenario: (s) =>
+          s.hierarchyStyle === "flat" &&
+          (s.accountCount === "130" || s.accountCount === "180"),
+      },
+      {
+        id: "accountVolume",
+        category: "Account volume",
+        principle: "Keep active accounts in a healthy range for your size.",
+        detail:
+          "SMBs typically land in the ~120–200 range; mid‑market and enterprise may need more, but should still prioritize readability.",
+        goodScenario: (s) => {
+          if (s.businessSize === "smb") {
+            return s.accountCount === "130" || s.accountCount === "180";
+          }
+          if (s.businessSize === "mid") {
+            return s.accountCount === "180" || s.accountCount === "250";
+          }
+          if (s.businessSize === "enterprise") {
+            return s.accountCount === "250" || s.accountCount === "400";
+          }
+          return false;
+        },
+      },
+      {
+        id: "kpiAlignment",
+        category: "KPI readiness",
+        principle: "Design accounts so key KPIs fall out of the ledger, not side spreadsheets.",
+        detail:
+          "Your COA should make it easy to compute gross margin, burn rate, unit economics, and segment profitability without heroic modeling.",
+        goodScenario: (s) => s.goal === "decision",
+      },
+      {
+        id: "industryShape",
+        category: "Industry alignment",
+        principle: "Reflect your economic engine in the revenue & COGS structure.",
+        detail:
+          "SaaS should highlight subscription vs. services; e‑commerce should separate inventory, landed cost, and fulfillment; agencies should isolate delivery labor.",
+        goodScenario: (s) =>
+          s.industry === "saas" ||
+          s.industry === "ecommerce" ||
+          s.industry === "services",
+      },
+      {
+        id: "taxVsMgmt",
+        category: "Reporting focus",
+        principle: "Separate management‑reporting clarity from tax‑only detail.",
+        detail:
+          "Avoid building your COA around tax categories. Use management‑friendly structure, then map to tax lines with software or schedules.",
+        goodScenario: (s) => s.goal !== "tax",
+      },
+      {
+        id: "scalability",
+        category: "Scalability",
+        principle: "Leave room in number ranges for growth.",
+        detail:
+          "Reserve gaps in sequences for new accounts. Avoid reusing old account numbers so historicals remain clean.",
+        goodScenario: (s) =>
+          s.hierarchyStyle !== "deep" && (s.accountCount === "130" || s.accountCount === "180"),
+      },
+      {
+        id: "consistency",
+        category: "Governance",
+        principle: "Use naming conventions and clear owner rules for new accounts.",
+        detail:
+          "Standardized prefixes, naming patterns, and approval rules keep the chart coherent as the business scales.",
+        goodScenario: (s) => s.businessSize !== "smb" || s.accountCount !== "400",
+      },
+    ];
+
+    const sampleAccountsPresets = {
+      generic_smb: {
+        assets: [
+          { code: "1000", name: "Cash and cash equivalents", notes: "Primary operating bank account(s)." },
+          { code: "1010", name: "Petty cash", notes: "Small on‑hand cash fund." },
+          { code: "1100", name: "Accounts receivable", notes: "Open customer invoices." },
+          { code: "1200", name: "Inventory", notes: "Goods held for sale or materials." },
+          { code: "1300", name: "Prepaid expenses", notes: "Insurance, software, rent paid in advance." },
+          { code: "1500", name: "Property & equipment", notes: "Furniture, computers, leasehold improvements." },
+          { code: "1590", name: "Accumulated depreciation", notes: "Contra account to property & equipment." },
+        ],
+        liabilities: [
+          { code: "2000", name: "Accounts payable", notes: "Vendor bills not yet paid." },
+          { code: "2100", name: "Credit card payable", notes: "Corporate card balances." },
+          { code: "2200", name: "Accrued expenses", notes: "Payroll, bonuses, and other accruals." },
+          { code: "2300", name: "Sales tax payable", notes: "Collected but not yet remitted." },
+          { code: "2400", name: "Deferred revenue", notes: "Customer cash received in advance." },
+          { code: "2500", name: "Loans payable", notes: "Term loans or line of credit." },
+        ],
+        equity: [
+          { code: "3000", name: "Common stock", notes: "Par value of issued shares or owner’s capital." },
+          { code: "3100", name: "Additional paid‑in capital", notes: "Amount paid in above par value." },
+          { code: "3200", name: "Retained earnings", notes: "Cumulative profits not distributed." },
+        ],
+        revenue_saas: [
+          { code: "4000", name: "Subscription revenue – new", notes: "First‑year recurring subscriptions." },
+          { code: "4010", name: "Subscription revenue – renewal", notes: "Renewals of existing customers." },
+          { code: "4020", name: "Usage‑based revenue", notes: "Overages, metered, or consumption charges." },
+          { code: "4100", name: "Professional services revenue", notes: "Implementation, onboarding, consulting." },
+        ],
+        revenue_generic: [
+          { code: "4000", name: "Product sales", notes: "Core product or service revenue." },
+          { code: "4010", name: "Service revenue", notes: "Project work, installation, or support." },
+          { code: "4100", name: "Other operating income", notes: "Incidental income that is recurring." },
+        ],
+        cogs_saas: [
+          { code: "5000", name: "Hosting & infrastructure", notes: "Cloud services, servers, databases." },
+          { code: "5010", name: "Third‑party software COGS", notes: "Licenses tied directly to revenue." },
+          { code: "5020", name: "Customer support costs", notes: "Support staff and tools (if treated as COGS)." },
+          { code: "5030", name: "Payment processing fees", notes: "Stripe, card fees from customers." },
+        ],
+        cogs_generic: [
+          { code: "5000", name: "Cost of goods sold – materials", notes: "Direct materials or inventory costs." },
+          { code: "5010", name: "Cost of goods sold – labor", notes: "Direct labor tied to delivery." },
+          { code: "5020", name: "Freight & fulfillment", notes: "Shipping, packaging, warehousing." },
+        ],
+        opex: [
+          { code: "6000", name: "Sales & marketing – payroll", notes: "Salaries, commissions, and taxes." },
+          { code: "6010", name: "Sales & marketing – programs", notes: "Paid ads, events, sponsorships." },
+          { code: "6100", name: "Research & development – payroll", notes: "Product & engineering salaries." },
+          { code: "6110", name: "Research & development – tools", notes: "Dev tools, environments, and repos." },
+          { code: "6200", name: "General & admin – payroll", notes: "Admin, finance, HR headcount." },
+          { code: "6210", name: "Rent & office", notes: "Office rent, coworking, utilities." },
+          { code: "6220", name: "Professional fees", notes: "Legal, accounting, advisory." },
+          { code: "6230", name: "Software (internal tools)", notes: "Non‑COGS software subscriptions." },
+          { code: "6240", name: "Travel & entertainment", notes: "Travel, team offsites, client dinners." },
+        ],
+        other: [
+          { code: "7000", name: "Interest income", notes: "Interest on bank balances or investments." },
+          { code: "7100", name: "Interest expense", notes: "Loan and credit interest." },
+          { code: "7200", name: "Other non‑operating income/expense", notes: "One‑off or non‑core items." },
+        ],
+      },
+    };
+
+    const scenarioDefaults = {
+      businessSize: "smb",
+      industry: "saas",
+      accountCount: "180",
+      hierarchyStyle: "flat",
+      goal: "decision",
+    };
+
+    let scenario = { ...scenarioDefaults };
+
+    const els = {
+      businessSize: document.getElementById("businessSize"),
+      industry: document.getElementById("industry"),
+      accountCount: document.getElementById("accountCount"),
+      hierarchyStyle: document.getElementById("hierarchyStyle"),
+      goalButtons: document.querySelectorAll(".pill-button"),
+      helperText: document.getElementById("helperText"),
+      bpList: document.getElementById("bpList"),
+      kpiOverall: document.getElementById("kpi-overall"),
+      kpiOverallChip: document.getElementById("kpi-overall-chip"),
+      kpiAccounts: document.getElementById("kpi-accounts"),
+      kpiAccountsChip: document.getElementById("kpi-accounts-chip"),
+      kpiKpiReady: document.getElementById("kpi-kpi-ready"),
+      kpiKpiChip: document.getElementById("kpi-kpi-chip"),
+      maturityBadge: document.getElementById("maturityBadge"),
+      maturityDot: document.getElementById("maturityDot"),
+      maturityLabel: document.getElementById("maturityLabel"),
+      scoreClarity: document.getElementById("scoreClarity"),
+      scoreSimplicity: document.getElementById("scoreSimplicity"),
+      scoreScalability: document.getElementById("scoreScalability"),
+      scoreGAAP: document.getElementById("scoreGAAP"),
+      barClarity: document.getElementById("barClarity"),
+      barSimplicity: document.getElementById("barSimplicity"),
+      barScalability: document.getElementById("barScalability"),
+      barGAAP: document.getElementById("barGAAP"),
+      resetBtn: document.getElementById("resetBtn"),
+      radarCanvas: document.getElementById("radarCanvas"),
+      sampleList: document.getElementById("sampleList"),
+    };
+
+    function computeScores(s) {
+      let base = 75;
+      let clarity = base;
+      let simplicity = base;
+      let scalability = base;
+      let gaap = base;
+
+      const accCount = parseInt(s.accountCount, 10);
+
+      if (s.businessSize === "smb") {
+        if (accCount < 80) {
+          simplicity += 6;
+          clarity -= 10;
+        } else if (accCount <= 200) {
+          clarity += 3;
+        } else if (accCount > 250) {
+          clarity -= 6;
+          simplicity -= 8;
+        }
+      } else if (s.businessSize === "mid") {
+        if (accCount < 130) {
+          clarity -= 5;
+        } else if (accCount > 250) {
+          simplicity -= 4;
+        }
+      } else if (s.businessSize === "enterprise") {
+        if (accCount < 180) {
+          clarity -= 8;
+          scalability -= 6;
+        } else if (accCount >= 400) {
+          simplicity -= 10;
+        }
+      }
+
+      if (s.hierarchyStyle === "flat") {
+        simplicity += 8;
+        scalability += 4;
+      } else if (s.hierarchyStyle === "moderate") {
+        clarity += 2;
+      } else if (s.hierarchyStyle === "deep") {
+        simplicity -= 10;
+        clarity -= 4;
+      }
+
+      if (s.goal === "decision") {
+        clarity += 6;
+        gaap += 4;
+      } else if (s.goal === "tax") {
+        gaap += 6;
+        clarity -= 4;
+      } else if (s.goal === "granularity") {
+        simplicity -= 6;
+      }
+
+      if (s.industry === "saas") {
+        gaap += 2;
+      } else if (s.industry === "ecommerce") {
+        gaap += 3;
+        scalability += 2;
+      } else if (s.industry === "nonprofit") {
+        gaap += 4;
+        simplicity -= 2;
+      }
+
+      clarity = Math.max(40, Math.min(98, clarity));
+      simplicity = Math.max(35, Math.min(98, simplicity));
+      scalability = Math.max(40, Math.min(98, scalability));
+      gaap = Math.max(40, Math.min(98, gaap));
+
+      let overall = Math.round(
+        (clarity * 0.32 +
+          simplicity * 0.26 +
+          scalability * 0.18 +
+          gaap * 0.24)
+      );
+
+      let maturityLevel;
+      if (overall < 55) maturityLevel = 1;
+      else if (overall < 70) maturityLevel = 2;
+      else if (overall < 80) maturityLevel = 3;
+      else if (overall < 90) maturityLevel = 4;
+      else maturityLevel = 5;
+
+      return { clarity, simplicity, scalability, gaap, overall, maturityLevel };
+    }
+
+    function helperTextForScenario(s) {
+      let base = "";
+      if (s.industry === "saas") {
+        base =
+          "You’ve selected a SaaS profile. Emphasize subscription revenue vs. services, clear COGS for hosting and support, and operating expenses by function (S&M, R&D, G&A).";
+      } else if (s.industry === "services") {
+        base =
+          "You’re in professional services. Separate delivery labor from admin payroll, and use clear groupings for billable vs. non‑billable costs.";
+      } else if (s.industry === "ecommerce") {
+        base =
+          "You’re in e‑commerce. Make inventory, landed cost, and fulfillment visible so gross margin is easy to read.";
+      } else if (s.industry === "nonprofit") {
+        base =
+          "You’re in a non‑profit context. Align accounts to programs, admin, and fundraising, and maintain clear restrictions and fund‑tracking.";
+      } else {
+        base =
+          "You’re in a generic small‑business profile. Focus on clean revenue groupings, direct costs, and simple operating expense buckets.";
+      }
+
+      if (s.goal === "tax") {
+        base +=
+          " You’ve optimized for tax and compliance. Consider layering a management‑friendly view on top, so leaders aren’t forced to read tax categories.";
+      } else if (s.goal === "granularity") {
+        base +=
+          " You’re leaning into extreme granularity. Ensure each extra account changes a decision; otherwise, move detail to sub‑ledgers or tags.";
+      } else {
+        base +=
+          " You’re prioritizing decision‑ready reporting. Keep the chart as simple as possible while still supporting your key KPIs.";
+      }
+
+      return base;
+    }
+
+    function renderBestPractices(s, scores) {
+      els.bpList.innerHTML = "";
+      const overall = scores.overall;
+      bestPractices.forEach((bp) => {
+        const isGood = bp.goodScenario(s);
+        const scoreHint = isGood
+          ? "Aligned with this scenario"
+          : "Opportunity to tighten this area";
+
+        const item = document.createElement("div");
+        item.className = "bp-item";
+
+        const header = document.createElement("div");
+        header.className = "bp-header";
+
+        const left = document.createElement("div");
+        const title = document.createElement("div");
+        title.className = "bp-title";
+        title.textContent = bp.principle;
+
+        const tag = document.createElement("div");
+        tag.className = "bp-tag";
+        tag.textContent = bp.category;
+
+        left.appendChild(title);
+        left.appendChild(tag);
+
+        const right = document.createElement("div");
+        right.className = "bp-score";
+        right.textContent = scoreHint;
+        if (isGood) {
+          const chip = document.createElement("span");
+          chip.className = "bp-chip";
+          chip.textContent = "On track";
+          right.appendChild(chip);
+        }
+
+        header.appendChild(left);
+        header.appendChild(right);
+
+        const body = document.createElement("div");
+        body.className = "bp-body";
+        body.textContent = bp.detail;
+
+        const footer = document.createElement("div");
+        footer.className = "bp-footer";
+
+        const badge = document.createElement("span");
+        badge.className = "pill-mini";
+        if (!isGood && (bp.id === "accountVolume" || bp.id === "simplicity")) {
+          badge.textContent =
+            "Try: consolidate low‑activity accounts or roll minor vendors into broader categories.";
+        } else if (!isGood && bp.id === "kpiAlignment") {
+          badge.textContent =
+            "Try: list your top 5–8 KPIs, then check that each has a clean mapping to GL accounts.";
+        } else {
+          badge.textContent =
+            "Use this as a discussion prompt with your bookkeeper or controller.";
+        }
+
+        const scoreSpan = document.createElement("span");
+        scoreSpan.textContent = "Relevance to your setup: " + (isGood ? "High" : "Medium");
+
+        footer.appendChild(badge);
+        footer.appendChild(scoreSpan);
+
+        item.appendChild(header);
+        item.appendChild(body);
+        item.appendChild(footer);
+
+        els.bpList.appendChild(item);
+      });
+    }
+
+    function renderSampleAccounts(s) {
+      const preset = sampleAccountsPresets.generic_smb;
+      els.sampleList.innerHTML = "";
+
+      const wrapper = document.createDocumentFragment();
+
+      function makeGroup(title, range, rows) {
+        const group = document.createElement("div");
+        group.className = "sample-group";
+
+        const header = document.createElement("div");
+        header.className = "sample-group-header";
+
+        const hTitle = document.createElement("div");
+        hTitle.className = "sample-group-title";
+        hTitle.textContent = title;
+
+        const hRange = document.createElement("div");
+        hRange.className = "sample-group-range";
+        hRange.textContent = range;
+
+        header.appendChild(hTitle);
+        header.appendChild(hRange);
+
+        const table = document.createElement("table");
+        table.className = "sample-table";
+
+        const thead = document.createElement("thead");
+        thead.innerHTML = "<tr><th>Acct #</th><th>Name</th><th style='width:45%;'>Notes</th></tr>";
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        rows.forEach((r) => {
+          const tr = document.createElement("tr");
+          const tdCode = document.createElement("td");
+          tdCode.className = "code";
+          tdCode.textContent = r.code;
+
+          const tdName = document.createElement("td");
+          tdName.textContent = r.name;
+
+          const tdNotes = document.createElement("td");
+          tdNotes.textContent = r.notes || "";
+
+          tr.appendChild(tdCode);
+          tr.appendChild(tdName);
+          tr.appendChild(tdNotes);
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+
+        group.appendChild(header);
+        group.appendChild(table);
+        return group;
+      }
+
+      wrapper.appendChild(
+        makeGroup("Assets", "1000–1999", preset.assets)
+      );
+
+      wrapper.appendChild(
+        makeGroup("Liabilities", "2000–2999", preset.liabilities)
+      );
+
+      wrapper.appendChild(
+        makeGroup("Equity", "3000–3999", preset.equity)
+      );
+
+      if (s.industry === "saas" || s.industry === "services") {
+        wrapper.appendChild(
+          makeGroup("Revenue (subscription / services)", "4000–4199", preset.revenue_saas)
+        );
+      } else {
+        wrapper.appendChild(
+          makeGroup("Revenue", "4000–4199", preset.revenue_generic)
+        );
+      }
+
+      if (s.industry === "ecommerce" || s.industry === "generic") {
+        wrapper.appendChild(
+          makeGroup("Cost of goods sold", "5000–5099", preset.cogs_generic)
+        );
+      } else {
+        wrapper.appendChild(
+          makeGroup("Cost of revenue / delivery", "5000–5099", preset.cogs_saas)
+        );
+      }
+
+      wrapper.appendChild(
+        makeGroup("Operating expenses", "6000–6999", preset.opex)
+      );
+
+      wrapper.appendChild(
+        makeGroup("Other income & expenses", "7000–7999", preset.other)
+      );
+
+      els.sampleList.appendChild(wrapper);
+
+      const hint = document.createElement("div");
+      hint.className = "sample-hint";
+      hint.innerHTML =
+        "Use these accounts as a checklist: highlight codes you already use, circle ones to add, and draw a line through accounts that don’t help any <span class='key'>specific KPI or decision</span>.";
+      els.sampleList.appendChild(hint);
+    }
+
+    let radarCtx = els.radarCanvas.getContext("2d");
+    function resizeRadarCanvas() {
+      const rect = els.radarCanvas.getBoundingClientRect();
+      const size = Math.min(rect.width, rect.height || rect.width);
+      els.radarCanvas.width = size * window.devicePixelRatio;
+      els.radarCanvas.height = size * window.devicePixelRatio;
+      radarCtx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    }
+
+    function drawRadar(scores) {
+      resizeRadarCanvas();
+      const ctx = radarCtx;
+      const w = els.radarCanvas.width / window.devicePixelRatio;
+      const h = els.radarCanvas.height / window.devicePixelRatio;
+      ctx.clearRect(0, 0, w, h);
+
+      const cx = w / 2;
+      const cy = h / 2;
+      const maxRadius = Math.min(w, h) / 2 - 10;
+
+      const axes = [
+        { key: "clarity", label: "Clarity" },
+        { key: "simplicity", label: "Simplicity" },
+        { key: "scalability", label: "Scalability" },
+        { key: "gaap", label: "GAAP & KPIs" },
+      ];
+
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      ctx.strokeStyle = "rgba(255,255,255,0.1)";
+      ctx.lineWidth = 1;
+      const rings = 4;
+      for (let i = 1; i <= rings; i++) {
+        const r = (maxRadius / rings) * i;
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "rgba(255,255,255,0.16)";
+      axes.forEach((axis, i) => {
+        const angle = (Math.PI * 2 * i) / axes.length - Math.PI / 2;
+        const x = Math.cos(angle) * maxRadius;
+        const y = Math.sin(angle) * maxRadius;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(x * 1.1, y * 1.1);
+        ctx.fillStyle = "rgba(255,255,255,0.7)";
+        ctx.font = "9px system-ui";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(axis.label, 0, 0);
+        ctx.restore();
+      });
+
+      const targetScore = 88;
+      ctx.beginPath();
+      axes.forEach((axis, i) => {
+        const angle = (Math.PI * 2 * i) / axes.length - Math.PI / 2;
+        const v = targetScore / 100;
+        const r = maxRadius * v;
+        const x = Math.cos(angle) * r;
+        const y = Math.sin(angle) * r;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.strokeStyle = "rgba(176,249,200,0.9)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.beginPath();
+      axes.forEach((axis, i) => {
+        const value =
+          axis.key === "clarity"
+            ? scores.clarity
+            : axis.key === "simplicity"
+            ? scores.simplicity
+            : axis.key === "scalability"
+            ? scores.scalability
+            : scores.gaap;
+        const v = value / 100;
+        const r = maxRadius * v;
+        const angle = (Math.PI * 2 * i) / axes.length - Math.PI / 2;
+        const x = Math.cos(angle) * r;
+        const y = Math.sin(angle) * r;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      const grad = ctx.createLinearGradient(-maxRadius, -maxRadius, maxRadius, maxRadius);
+      grad.addColorStop(0, "rgba(79,140,255,0.18)");
+      grad.addColorStop(1, "rgba(124,92,255,0.26)");
+      ctx.fillStyle = grad;
+      ctx.strokeStyle = "rgba(79,140,255,0.85)";
+      ctx.lineWidth = 1.8;
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function updateUI() {
+      const scores = computeScores(scenario);
+
+      els.helperText.innerHTML =
+        "<strong>Scenario lens:</strong> " + helperTextForScenario(scenario);
+
+      els.kpiOverall.textContent = scores.overall.toString();
+      els.kpiKpiReady.textContent = scores.gaap.toString();
+
+      const accCount = parseInt(scenario.accountCount, 10);
+      els.kpiAccounts.textContent =
+        accCount >= 400 ? "400+" : accCount.toString();
+
+      let accountsChipText = "";
+      let accountsChipClass = "kpi-chip";
+      if (accCount < 80) accountsChipText = "Too sparse for analysis";
+      else if (accCount < 130) accountsChipText = "Lean, may be OK";
+      else if (accCount <= 200) accountsChipText = "Within healthy range";
+      else if (accCount <= 250) accountsChipText = "Heavy but manageable";
+      else {
+        accountsChipText = "Too granular";
+        accountsChipClass += " kpi-bad";
+      }
+      els.kpiAccountsChip.textContent = accountsChipText;
+      els.kpiAccountsChip.className = accountsChipClass;
+
+      let overallChipText = "";
+      if (scores.overall >= 85) {
+        overallChipText = "Controller‑grade";
+      } else if (scores.overall >= 75) {
+        overallChipText = "“Good, but noisy”";
+      } else if (scores.overall >= 65) {
+        overallChipText = "Usable, needs cleanup";
+      } else {
+        overallChipText = "Risk of chaos";
+      }
+      els.kpiOverallChip.textContent = overallChipText;
+
+      let kpiChipText = "";
+      if (scores.gaap >= 85) kpiChipText = "Strong KPI coverage";
+      else if (scores.gaap >= 70) kpiChipText = "Gaps in KPIs";
+      else kpiChipText = "Hard to get clean metrics";
+      els.kpiKpiChip.textContent = kpiChipText;
+
+      els.scoreClarity.textContent = scores.clarity.toString();
+      els.scoreSimplicity.textContent = scores.simplicity.toString();
+      els.scoreScalability.textContent = scores.scalability.toString();
+      els.scoreGAAP.textContent = scores.gaap.toString();
+
+      const setBar = (el, val) => {
+        el.style.width = val + "%";
+        if (val < 60) el.classList.add("low");
+        else el.classList.remove("low");
+      };
+      setBar(els.barClarity, scores.clarity);
+      setBar(els.barSimplicity, scores.simplicity);
+      setBar(els.barScalability, scores.scalability);
+      setBar(els.barGAAP, scores.gaap);
+
+      let maturityText = "";
+      let low = false;
+      switch (scores.maturityLevel) {
+        case 1:
+          maturityText = "Level 1 – Fragmented & hard to use";
+          low = true;
+          break;
+        case 2:
+          maturityText = "Level 2 – Basic, but messy";
+          low = true;
+          break;
+        case 3:
+          maturityText = "Level 3 – Functional, but noisy";
+          break;
+        case 4:
+          maturityText = "Level 4 – Clean & scalable";
+          break;
+        case 5:
+          maturityText = "Level 5 – Controller‑grade clarity";
+          break;
+      }
+      els.maturityLabel.textContent = maturityText;
+      if (low) {
+        els.maturityBadge.classList.add("low");
+        els.maturityDot.classList.add("low");
+      } else {
+        els.maturityBadge.classList.remove("low");
+        els.maturityDot.classList.remove("low");
+      }
+
+      renderBestPractices(scenario, scores);
+      renderSampleAccounts(scenario);
+      drawRadar(scores);
+    }
+
+    els.businessSize.addEventListener("change", (e) => {
+      scenario.businessSize = e.target.value;
+      updateUI();
+    });
+    els.industry.addEventListener("change", (e) => {
+      scenario.industry = e.target.value;
+      updateUI();
+    });
+    els.accountCount.addEventListener("change", (e) => {
+      scenario.accountCount = e.target.value;
+      updateUI();
+    });
+    els.hierarchyStyle.addEventListener("change", (e) => {
+      scenario.hierarchyStyle = e.target.value;
+      updateUI();
+    });
+
+    els.goalButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        els.goalButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        scenario.goal = btn.dataset.goal;
+        updateUI();
+      });
+    });
+
+    els.resetBtn.addEventListener("click", () => {
+      scenario = { ...scenarioDefaults };
+      els.businessSize.value = scenario.businessSize;
+      els.industry.value = scenario.industry;
+      els.accountCount.value = scenario.accountCount;
+      els.hierarchyStyle.value = scenario.hierarchyStyle;
+      els.goalButtons.forEach((b) =>
+        b.classList.toggle("active", b.dataset.goal === scenario.goal)
+      );
+      updateUI();
+    });
+
+    window.addEventListener("resize", () => drawRadar(computeScores(scenario)));
+
+    updateUI();
+  </script>
+</body>
+</html>
